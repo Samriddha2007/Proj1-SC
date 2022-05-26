@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <title>Weather App bruh edition</title>
+        <style>
+        h1 {
+            color: blue;
+            text-align: center;
+        }
+        body {
+             background-color: lightblue;
+             font-family: "Lucida Console", "Courier New", monospace;
+             text-align: center;
+        }
+        p.inset {
+            border-style: inset;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Welcome to Weather App</h1>
+        <p>Please give permission to turn on location</p>
+          <button onclick="getLoc()">Click to get automatic Latitude and Longitude</button>
+
+    <p id="demo"></p>
+    <p class="inset">
+        <p id="x"></p>
+        <p id="y"></p>
+        <p id="z"></p>
+    </p>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            var x = document.getElementById("demo");
+            function getLoc() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(storeLatandLong);
+                } else { 
+                    x.innerHTML = "Geolocation is not supported by your browser. Please try to change it";
+                }
+            }
+            function storeLatandLong(position){
+                lat = position.coords.latitude;
+                long = position.coords.longitude;
+                showPosition(lat,long)
+            }
+            function showPosition(lat,long) {
+                x.innerHTML = "Latitude: " + lat + 
+                "<br>Longitude: " + long;
+                var button = document.createElement("button");
+                button.setAttribute("id","btn")
+                button. innerHTML = "Find Weather Details";
+                var body = document.getElementsByTagName("body")[0];
+                body.appendChild(button);
+                button.addEventListener ("click", function() {
+                    getWeatherByLL(lat,long)
+                });
+            }
+            function getWeatherByLL(lat,long){
+               var URLrequest =  'https://fcc-weather-api.glitch.me/api/current?'+'lat='+lat+'&lon='+long;
+                $.getJSON(URLrequest)
+                .done(function(data) {
+                var temperature = data.main.temp;
+                var humidity = data.main.humidity;
+                var details = data.weather[0].description
+                showWeather(temperature,humidity,details)
+                })
+                .fail(function() {
+                alert('Sorry, something bad happened when retrieving the weather');
+                }
+            );
+            }
+            function showWeather(tem,hum,det){
+                console.log(tem);
+                console.log(hum);
+                console.log(det);
+                tempe = document.getElementById("x");
+                tempe.innerHTML = "Temperature is " + tem;
+                humi = document.getElementById("y");
+                humi.innerHTML = "Humidity is " + hum;
+                details = document.getElementById("z");
+                details.innerHTML = "Details is " + det;
+                var elem = document.getElementById('btn');
+                elem.parentNode.removeChild(elem);
+                return false;
+            }
+            
+        </script>
+</html>
